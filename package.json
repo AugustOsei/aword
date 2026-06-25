@@ -2,6 +2,8 @@
   "name": "aword",
   "version": "0.1.0",
   "private": true,
+  "description": "A daily five-word game — guess five five-letter words a day, learn what they mean, earn a medal.",
+  "license": "MIT",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

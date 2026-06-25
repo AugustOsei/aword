@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import { getSameLengthWords, getFeaturedWord } from '@/lib/words';
 import { getTodayString, formatLongDate } from '@/lib/utils';
 import { SESSION_WORD_LENGTH, SESSION_WORD_COUNT } from '@/lib/config';
@@ -10,7 +11,24 @@ export const metadata: Metadata = {
 
 const DAYS_AHEAD = 30;
 
-export default function PreviewPage() {
+// This page reveals future answers, so it's gated: in production it 404s unless
+// the request carries ?key=<AWORD_PREVIEW_KEY> matching the server-only env var.
+// In development it's always open. If the env var is unset in prod, it stays 404
+// — fail-closed, so answers can never leak by accident.
+function authorized(key: string | undefined): boolean {
+  if (process.env.NODE_ENV !== 'production') return true;
+  const secret = process.env.AWORD_PREVIEW_KEY;
+  return Boolean(secret && key === secret);
+}
+
+export default async function PreviewPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ key?: string }>;
+}) {
+  const { key } = await searchParams;
+  if (!authorized(key)) notFound();
+
   const today = new Date();
   const rows = Array.from({ length: DAYS_AHEAD }, (_, i) => {
     const d = new Date(today);

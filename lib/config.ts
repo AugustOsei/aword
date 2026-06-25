@@ -20,8 +20,20 @@ export const ALLOW_REPLAY = TEST_MODE;
 export const SESSION_WORD_LENGTH = 5;
 export const SESSION_WORD_COUNT = 5;
 
-// Canonical site origin (no trailing slash). Override per-environment with
-// NEXT_PUBLIC_SITE_URL; used for metadata, sitemap, robots, and the manifest.
-export const SITE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL || 'https://aword.augustwheel.com'
-).replace(/\/$/, '');
+// Canonical site origin (no trailing slash). Used for metadata, sitemap,
+// robots, the manifest, and (critically) the absolute URL of the social-share
+// image. Resolution order:
+//   1. NEXT_PUBLIC_SITE_URL  — set this once your real domain is live.
+//   2. Vercel's own deployment URL — so the share image still resolves on the
+//      *.vercel.app host before a custom domain is attached.
+//   3. The planned subdomain as a last resort.
+function resolveSiteUrl(): string {
+  const explicit = process.env.NEXT_PUBLIC_SITE_URL;
+  if (explicit) return explicit;
+  const vercel =
+    process.env.VERCEL_PROJECT_PRODUCTION_URL || process.env.VERCEL_URL;
+  if (vercel) return `https://${vercel}`;
+  return 'https://aword.augustwheel.com';
+}
+
+export const SITE_URL = resolveSiteUrl().replace(/\/$/, '');

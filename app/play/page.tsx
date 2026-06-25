@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useGameSession } from '@/hooks/useGameSession';
@@ -10,6 +10,9 @@ import { WordAnnouncement } from '@/components/game/WordAnnouncement';
 import { TileGrid } from '@/components/game/TileGrid';
 import { Keyboard } from '@/components/game/Keyboard';
 import { WordCard } from '@/components/game/WordCard';
+import { Modal } from '@/components/ui/Modal';
+import { HowToPlay } from '@/components/ui/HowToPlay';
+import { hasSeenHowToPlay, setSeenHowToPlay } from '@/lib/storage';
 import { evaluateGuess } from '@/lib/utils';
 import type { TileState } from '@/types';
 
@@ -32,6 +35,18 @@ export default function PlayPage() {
     nextWord,
     dismissAnnouncement,
   } = useGameSession();
+
+  // On the very first session ever (per device), surface the rules over the
+  // game board so newcomers know what they're looking at before playing.
+  const [showHowTo, setShowHowTo] = useState(false);
+  useEffect(() => {
+    if (!hasSeenHowToPlay()) setShowHowTo(true);
+  }, []);
+
+  const dismissHowTo = () => {
+    setSeenHowToPlay();
+    setShowHowTo(false);
+  };
 
   // Redirect out when the session is done (or was already done today).
   useEffect(() => {
@@ -59,7 +74,7 @@ export default function PlayPage() {
     onLetter: addLetter,
     onBackspace: removeLetter,
     onEnter: submitGuess,
-    enabled: phase === 'play',
+    enabled: phase === 'play' && !showHowTo,
   });
 
   // Aggregate keyboard letter colors from the current game's guesses.
@@ -130,6 +145,10 @@ export default function PlayPage() {
           />
         )}
       </AnimatePresence>
+
+      <Modal open={showHowTo} onClose={dismissHowTo} title="How to play">
+        <HowToPlay />
+      </Modal>
     </div>
   );
 }

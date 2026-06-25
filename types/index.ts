@@ -45,6 +45,7 @@ export interface PlayerData {
   totalGamesPlayed: number;
   awardHistory: { date: string; award: string }[]; // last 30 days
   hasSeenOnboarding: boolean;
+  hasSeenHowToPlay: boolean;
   savedWords: SavedWord[];
   muted: boolean;
 }

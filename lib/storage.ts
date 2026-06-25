@@ -44,6 +44,7 @@ const DEFAULT_PLAYER: PlayerData = {
   totalGamesPlayed: 0,
   awardHistory: [],
   hasSeenOnboarding: false,
+  hasSeenHowToPlay: false,
   savedWords: [],
   muted: false,
 };
@@ -102,6 +103,14 @@ export function hasSeenOnboarding(): boolean {
 
 export function setSeenOnboarding(): void {
   updatePlayer({ hasSeenOnboarding: true });
+}
+
+export function hasSeenHowToPlay(): boolean {
+  return getPlayerData().hasSeenHowToPlay;
+}
+
+export function setSeenHowToPlay(): void {
+  updatePlayer({ hasSeenHowToPlay: true });
 }
 
 /* ------------------------------ Saved words --------------------------- */

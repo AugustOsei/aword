@@ -29,7 +29,7 @@ export function HowToPlay() {
         </li>
         <li className="flex gap-2">
           <span className="text-green">•</span>
-          Guess each word in up to 5 tries. The tiles tell you how close you are.
+          Guess each word in up to 6 tries. The tiles tell you how close you are.
         </li>
         <li className="flex gap-2">
           <span className="text-green">•</span>

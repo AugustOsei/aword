@@ -67,5 +67,5 @@ export interface SessionState {
   sessionComplete: boolean;
 }
 
-export const MAX_GUESSES = 5;
+export const MAX_GUESSES = 6;
 export const WORD_LENGTHS = [3, 4, 5, 6, 7] as const;
